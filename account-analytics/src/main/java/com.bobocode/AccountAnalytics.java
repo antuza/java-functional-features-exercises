@@ -126,7 +126,14 @@ public class AccountAnalytics {
      * @return list of accounts sorted by first and last names
      */
     public List<Account> sortByFirstAndLastNames() {
-        throw new UnsupportedOperationException("It's your job to implement this method"); // todo
+        Comparator<Account> sortByFirstName = (p, o) -> p.getFirstName().compareToIgnoreCase(o.getFirstName());
+        Comparator<Account> sortByLastName = (p, o) -> p.getLastName().compareToIgnoreCase(o.getLastName());
+
+        return accounts
+                .stream()
+                .sorted(sortByFirstName
+                        .thenComparing(sortByLastName))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -136,7 +143,11 @@ public class AccountAnalytics {
      * @return true if there is an account that has an email with provided domain
      */
     public boolean containsAccountWithEmailDomain(String emailDomain) {
-        throw new UnsupportedOperationException("It's your job to implement this method"); // todo
+        return accounts
+                .stream()
+                .filter(account -> account.getEmail().substring(account.getEmail().indexOf("@") + 1).equals(emailDomain))
+                .findFirst()
+                .isPresent();
     }
 
     /**
@@ -147,7 +158,16 @@ public class AccountAnalytics {
      * @return account balance
      */
     public BigDecimal getBalanceByEmail(String email) {
-        throw new UnsupportedOperationException("It's your job to implement this method"); // todo
+        Account myAccount = accounts
+                            .stream()
+                            .filter(account -> account.getEmail().equals(email))
+                            .findFirst()
+                            .orElse(null);
+        if(myAccount == null) {
+            throw new EntityNotFoundException("Cannot find account by e-mail");
+        } else {
+            return myAccount.getBalance();
+        }
     }
 
     /**
