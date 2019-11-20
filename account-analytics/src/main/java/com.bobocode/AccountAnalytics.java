@@ -79,7 +79,20 @@ public class AccountAnalytics {
      */
     public Map<String, List<Account>> groupAccountsByEmailDomain() {
 
-        throw new UnsupportedOperationException("It's your job to implement this method"); // todo
+        return accounts
+                .stream()
+                .collect(Collectors.toMap(
+                        (Account account) -> account.getEmail().substring(account.getEmail().indexOf("@") + 1),
+                        (accountToValues) -> {
+                            List<Account> accounts = new ArrayList<>();
+                            accounts.add(accountToValues);
+                            return accounts;
+                        },
+                        (oldValue, newValue) -> {
+                            oldValue.addAll(newValue);
+                            return oldValue;
+                        }));
+
     }
 
     /**
